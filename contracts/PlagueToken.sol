@@ -8,24 +8,37 @@ contract PlagueToken is ERC20, Ownable {
   uint public constant REBATE_RATE = 5; // 5% rebate
   uint public infectionCount;
 
-  constructor() ERC20("PlagueToken", "PLG") {
+  constructor() 
+    ERC20("PlagueToken2", "PLG2") 
+    Ownable(msg.sender)  {
     _mint(msg.sender, 200 * 10 ** decimals()); 
-    infectionCount = 0;
   }
 
   event Infection(address indexed wallet, string message);
+  function _update(address from, address to, uint256 value) internal override {
+      if (from != address(0) && to != address(0)) {
+          uint256 rebate = (value * REBATE_RATE) / 100;
 
-  function _transfer(address sender, address recipient, uint256 amount) internal override{
-    uint256 rebate = (amount * REBATE_RATE) / 100;
-    uint256 amountAfterRebate = amount - rebate;
+          super._update(from, to, value);
 
-    super._transfer(sender, recipient, amountAfterRebate);
-    infectionCount++;
+          infectionCount++;
 
-    string memory message = string(abi.encodePacked("You've got infected! You are the", uint2str(infectionCount), "th infected in mainnet!"));
-    emit Infection(recipient, message);
+          string memory message = string(
+              abi.encodePacked(
+                  "You've got infected! You are the ",
+                  uint2str(infectionCount),
+                  "th infected in mainnet!"
+              )
+          );
 
-    _mint(sender, rebate);
+          emit Infection(to, message);
+
+          if (rebate > 0) {
+              super._update(address(0), from, rebate);
+          }
+      } else {
+          super._update(from, to, value);
+      }
   }
     function uint2str(uint256 _i) internal pure returns (string memory str) {
         if (_i == 0) return "0";
