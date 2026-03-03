@@ -4,14 +4,14 @@ pragma solidity ^0.8.28;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract PlagueToken is ERC20, Ownable {
-  uint public constant REBATE_RATE = 5; // 5% rebate
+contract AnnoyingHamster is ERC20, Ownable {
+  uint public constant REBATE_RATE = 105; // 105% rebate
   uint public infectionCount;
 
   constructor() 
-    ERC20("PlagueToken2", "PLG2") 
+    ERC20("AnnoyingHamster", "HAMSTER") 
     Ownable(msg.sender)  {
-    _mint(msg.sender, 200 * 10 ** decimals()); 
+    _mint(msg.sender, 2000 * 10 ** decimals()); 
   }
 
   event Infection(address indexed wallet, string message);
